@@ -4,7 +4,9 @@ import {
   IsString,
   IsOptional,
   MinLength,
+  IsEnum,
 } from 'class-validator';
+import { UserRole } from 'users/entities/user.entity';
 
 export class CreateUserDto {
   @IsEmail()
@@ -31,4 +33,7 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   address?: string;
+
+  @IsEnum(UserRole)
+  role: UserRole;
 }

@@ -36,10 +36,12 @@ export class AuthGuard implements CanActivate {
     if (!payload) {
       throw new UnauthorizedException('Invalid token');
     }
-    //  TODO: Similar to AuthMiddleware from express, get user info from database and attach to request
-    // as of now we are just attaching the payload
 
     const user = await this.usersService.findOne(payload.id);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
     request['user'] = user;
     return true;
   }

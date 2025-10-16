@@ -47,44 +47,24 @@ export class UsersService {
     const savedUser = await this.userRepository.save(user);
 
     // Remove password from response
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...result } = savedUser;
     return result as User;
   }
 
   async findAll(): Promise<User[]> {
-    const users = await this.userRepository.find({
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        address: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    const users = await this.userRepository.find();
     return users;
   }
 
   //TODO: use this method in authguard to get user info from database
   async findOne(id: string): Promise<User> {
+    console.log('Looking for user with ID:', id);
     const user = await this.userRepository.findOne({
       where: { id },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        address: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
     });
 
+    console.log('User found in database:', user);
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -138,6 +118,11 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOne({
         where: { email: email },
+        select: {
+          id: true,
+          email: true,
+          password: true,
+        },
       });
 
       if (!user) {

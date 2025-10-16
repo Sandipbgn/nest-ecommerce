@@ -17,13 +17,20 @@ import {
   LoggedInUser,
   type RequestWithUser,
 } from './decorators/user.decorator';
+import { CustomBody } from './decorators/customBody.decorator';
+import { UserRole } from './entities/user.entity';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './auth/roles.guard';
+import { Auth } from './decorators/auth.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(AuthGuard)
+  //if we only use @Auth() decorator, it will use AuthGuard by default but do not use RolesGuard
+  // if we pass roles as parameter to @Auth() decorator, it will use both AuthGuard and RolesGuard
+  @Auth()
   findAll(@Req() req: RequestWithUser) {
     const user = req.user;
     console.log('logged in user', user);
@@ -31,7 +38,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   findOne(@LoggedInUser('id') user, @Param('id') id: string) {
     console.log('logged in user', user);
     return this.usersService.findOne(id);
@@ -48,10 +56,11 @@ export class UsersController {
   // Hint: You can refer to the implementation of @LoggedInUser() decorator above
   // Also refer to the official docs link above to understand how to extract body from request object
 
+  //we are using custom body decorator here to extract email and password from request body
   @Post('/login')
   login(
-    @Body('email') email: string,
-    @Body('password') password: string,
+    @CustomBody('email') email: string,
+    @CustomBody('password') password: string,
   ): Promise<{ token: string }> {
     return this.usersService.login(email, password);
   }

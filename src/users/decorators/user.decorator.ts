@@ -1,9 +1,9 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
+import { User } from 'users/entities/user.entity';
 
 export interface RequestWithUser extends Request {
-  //TODO: We need to update this type once we attach more info of user from database in authguard
-  user: { id: string; email: string };
+  user: Omit<User, 'password'>;
 }
 
 export const LoggedInUser = createParamDecorator(

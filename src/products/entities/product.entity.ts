@@ -1,4 +1,3 @@
-
 import { OrderItem } from 'orders/entities/order-item.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -18,6 +17,9 @@ export class Product {
 
   @Column()
   brand: string;
+
+  @Column()
+  imageUrls: string[];
 
   @Column({ type: 'jsonb' })
   variants: variant[];
