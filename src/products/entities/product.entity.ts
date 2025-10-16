@@ -18,8 +18,8 @@ export class Product {
   @Column()
   brand: string;
 
-  @Column()
-  imageUrls: string[];
+  // @Column()
+  // imageUrls: string[];
 
   @Column({ type: 'jsonb' })
   variants: variant[];
