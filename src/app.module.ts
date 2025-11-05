@@ -7,18 +7,26 @@ import { CategoriesModule } from './categories/categories.module';
 import { OrdersModule } from './orders/orders.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UploadModule } from './upload/upload.module';
+import { ConfigModule } from '@nestjs/config';
+import config from 'config/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [config],
+    }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 1234,
-      username: 'postgres',
-      password: 'postgres',
+      //use variables from config
+      // @ts-expect-error dbType from env is string but TypeORM expects specific union
+      type: config().database.dbType,
+      host: config().database.host,
+      port: config().database.port,
+      username: config().database.username,
+      password: config().database.password,
       autoLoadEntities: true,
-      database: 'ecommerce',
-      synchronize: true,
+      database: config().database.databaseName,
+      synchronize: false,
     }),
     UsersModule,
     ProductsModule,
